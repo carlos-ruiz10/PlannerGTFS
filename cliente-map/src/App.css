@@ -1,0 +1,17 @@
+.leaflet-container{
+  width: 80vw;
+  height: 90vh;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-bottom: 20px;
+
+}
+
+.navbar {
+  max-width: 1550px; /* Cambia 1200px por el ancho máximo deseado */
+  margin: 0 auto; /* Esto centra el navbar horizontalmente */
+}
+
+.navbar img {
+  object-fit: scale-down;
+}
