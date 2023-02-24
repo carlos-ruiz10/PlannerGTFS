@@ -1,11 +1,19 @@
+//Componente Markers
+
 import React from "react";
-import { Marker } from "react-leaflet";
+import { Marker, Popup } from "react-leaflet";
 import { IconLocation } from "./IconLocation";
 
-const Markers = () => {
+const Markers = ({ data }) => {
     return (
-        <Marker position={{lat: '19.42847', lng: '-99.12766'}} icon={IconLocation} />
-    )
-}
+        <>
+            {data.map((stops, index) => (
+                <Marker key={index} position={[stops.latitude, stops.longitude]} icon={IconLocation}>
+                    <Popup>{stops.name}</Popup>
+                </Marker>
+            ))}
+        </>
+    );
+};
 
-export default Markers
+export default Markers;

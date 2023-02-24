@@ -1,3 +1,5 @@
+//Archivo index.js
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -6,14 +8,12 @@ import reportWebVitals from './reportWebVitals';
 
 //Components
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Navbar from "./components/Navbar";
-import Formulario from './components/Form';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Navbar/>
-    <Formulario/>  <App />
+    <App/>
   </React.StrictMode>
 );
 

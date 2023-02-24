@@ -91,7 +91,7 @@ def ruta_corta():
 
 
     #URL ejemplo:
-    #http://127.0.0.1:5000/ruta-mas-corta?origen=Metro%20Polit%C3%A9cnico%20_0&destino=Eje%20Central%20y%20Poniente%20152_0
+    #http://127.0.0.1:5000/ruta-corta?origen=Metro%20Polit%C3%A9cnico%20_0&destino=Eje%20Central%20y%20Poniente%20152_0
 
     #05161F0-TORRESCIENTI, 0200L3-GUERRERO, 0200L2-CHABACANO
     # Metro%20Indios%20Verdes_0, San%20Antonio%20Abad%20-%20Metro Chabacano_0
@@ -109,7 +109,11 @@ def paradasgtfs():
         }
         stops_list.append(stop_info)
 
-    return jsonify(stops_list)
+    resultadoo = {
+        'stops': stops_list
+    }
+
+    return jsonify(resultadoo)
 
 @app.route('/paradas', methods=['GET'])
 def paradas():
