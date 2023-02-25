@@ -2,19 +2,31 @@ import React, { useEffect, useState } from 'react'
 import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'
 import { allStops } from '../functions/funciones'
+import axios from 'axios';
 
 
 function MapView() {
   const [stops, setStops] = useState([])
- // const params = useParams()
-
   const [origen, setOrigen] = useState('');
   const [destino, setDestino] = useState('');
+  const [rutaMasCorta, setRutaMasCorta] = useState([]);
 
 
   useEffect(() => {
     allStops(setStops)
   }, [])
+
+  const handleCalcularRuta = async (event) => {
+    event.preventDefault();
+    if (!origen || !destino) {
+      alert('Selecciona origen y destino');
+      return;
+    }
+    const peticion = await axios.get(`http://127.0.0.1:5000/ruta-corta?origen=${origen}&destino=${destino}`)
+    setRutaMasCorta(peticion.data.stops)
+
+    console.log(peticion.data);
+  }
 
   return (
     <div className="container text-center">
@@ -42,10 +54,22 @@ function MapView() {
               </select>
             </div>
 
-            <button type="submit" className="mb-4 btn btn-success col-md-10 ms-md-auto fw-semibold">Calcular Ruta</button>
+            <button type="submit" className="mb-4 btn btn-success col-md-6 ms-md-auto fw-semibold" onClick={handleCalcularRuta}>Calcular Ruta</button>
+
+            {rutaMasCorta && (
+              <div className="text-bg-light col-sm-12 mb-3 mb-sm-0">
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Ruta mas corta es:</h5>
+                    <p className="card-text">{rutaMasCorta.map(stops => stops.name).join(', ')}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
           </form>
         </div>
-
 
         <div className="col-9">
           <MapContainer center={{ lat: '19.42847', lng: '-99.12766' }} zoom={13}>
@@ -53,6 +77,7 @@ function MapView() {
           </MapContainer>
         </div>
       </div>
+
     </div>
   )
 }
