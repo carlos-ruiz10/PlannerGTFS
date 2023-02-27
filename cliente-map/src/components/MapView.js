@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'
 import { allStops } from '../functions/funciones'
 import axios from 'axios';
+import { IconLocation } from './IconLocation';
 
 
 function MapView() {
@@ -16,6 +17,7 @@ function MapView() {
     allStops(setStops)
   }, [])
 
+
   const handleCalcularRuta = async (event) => {
     event.preventDefault();
     if (!origen || !destino) {
@@ -25,7 +27,6 @@ function MapView() {
     const peticion = await axios.get(`http://127.0.0.1:5000/ruta-corta?origen=${origen}&destino=${destino}`)
     setRutaMasCorta(peticion.data.stops)
 
-    console.log(peticion.data);
   }
 
   return (
@@ -60,20 +61,27 @@ function MapView() {
               <div className="text-bg-light col-sm-12 mb-3 mb-sm-0">
                 <div className="card">
                   <div className="card-body">
-                    <h5 className="card-title">Ruta mas corta es:</h5>
-                    <p className="card-text">{rutaMasCorta.map(stops => stops.name).join(', ')}</p>
+                    <h5 className="card-title">La ruta más corta es:</h5>
+                    <p className="card-text">{rutaMasCorta.map(stops => <React.Fragment key={stops.name}>{stops.name}<br /></React.Fragment>)}</p>
                   </div>
                 </div>
               </div>
             )}
-
-
           </form>
         </div>
 
         <div className="col-9">
           <MapContainer center={{ lat: '19.42847', lng: '-99.12766' }} zoom={13}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' />
+            
+            {rutaMasCorta.map(stops => (
+              <Marker key={stops.name} position={[stops.latitude, stops.longitude]} icon={IconLocation}>
+                <Popup>
+                  {stops.name}
+                </Popup>
+              </Marker>
+            ))}
+
           </MapContainer>
         </div>
       </div>
