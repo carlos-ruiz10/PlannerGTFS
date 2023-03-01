@@ -3,12 +3,11 @@ from flask_cors import CORS
 from config import config
 import pandas as pd
 import networkx as nx
-import json
 
 app = Flask(__name__)
 
 CORS(app)
-#Variables
+
 # 1. Leer los archivos GTFS utilizando Pandas
 stops = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/stops.txt')
 trips = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/trips.txt')
@@ -47,8 +46,6 @@ for index, row in stop_times.iterrows():
         curr_stop = row['stop_id']
         weight = (row['arrival_time'] - stop_times.loc[index-1, 'departure_time']).seconds  # Peso de la arista en segundos
         G.add_edge(prev_stop, curr_stop, weight=weight)
-
-
 
 @app.route('/ruta-corta', methods=['GET'])
 def ruta_corta():
@@ -92,10 +89,6 @@ def ruta_corta():
 
     #URL ejemplo:
     #http://127.0.0.1:5000/ruta-corta?origen=Metro%20Polit%C3%A9cnico%20_0&destino=Eje%20Central%20y%20Poniente%20152_0
-
-    #05161F0-TORRESCIENTI, 0200L3-GUERRERO, 0200L2-CHABACANO
-    # Metro%20Indios%20Verdes_0, San%20Antonio%20Abad%20-%20Metro Chabacano_0
-
     
 @app.route('/paradasgtfs', methods=['GET'])
 def paradasgtfs():
@@ -115,13 +108,54 @@ def paradasgtfs():
 
     return jsonify(resultadoo)
 
+df_stops = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/GTFStops.csv', encoding='latin1')
+stopinfo = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/stop_InfoGTFS.csv',encoding='latin1')
+
+GRAPH = nx.DiGraph()
+GRAPH = nx.from_pandas_edgelist(df_stops, source='Origen', target='Destino', edge_attr='Distancia')
+
+@app.route('/short-route', methods=['GET'])
+def shortroute():
+
+    origen = request.args.get('origen')
+    destino = request.args.get('destino')
+
+    path = nx.dijkstra_path(GRAPH, source=origen, target=destino, weight='Distancia')
+    stops_info = stopinfo[['stop_id', 'stop_name', 'stop_lat', 'stop_lon']]
+    stops_in_path = stops_info[stops_info['stop_id'].isin(path)]
+
+    path_info = []
+    for stop_id in path:
+        stop_info = stops_in_path[stops_in_path['stop_id'] == stop_id].iloc[0]
+        stop_info_dict = {
+            'name': stop_info['stop_name'],
+            'latitude': stop_info['stop_lat'],
+            'longitude': stop_info['stop_lon']
+        }
+        path_info.append(stop_info_dict)
+
+    result = {
+        'path': path,
+        'stops': path_info
+    }
+
+    return jsonify(result)
+
+@app.route('/allparadas', methods=['GET'])
+def allparadas():
+    stops_info = stopinfo[['stop_id', 'stop_name', 'stop_lat','stop_lon']]
+
+    resultados = {
+    'stops': stops_info.to_dict(orient='records')
+    }
+    return jsonify(resultados)
+
 @app.route('/paradas', methods=['GET'])
 def paradas():
     # 7. Obtener información adicional de las paradas
     stops_info = stops[['stop_id', 'stop_name']]
     stops_info['stop_id'] = stops_info['stop_id'].map(unique_stop_ids)
 
-    # 9. Crear una lista con la información de las paradas en la ruta más corta
     path_info = []
     for index, row in stops_info.iterrows():
         stop_infor = {
@@ -130,19 +164,11 @@ def paradas():
         }
         path_info.append(stop_infor)
 
-    # 10. Crear un diccionario con la información de la ruta más corta y la información de las paradas
     resultado = {
         'stops': path_info
     }
 
-    # 11. Convertir el diccionario a formato JSON
-    #result_json = json.dumps(resultado, indent=4)
-
-    # 12. Devolver el resultado en formato JSON
-    #return result_json
     return jsonify(resultado)
-
-
 
 
 if __name__ == '__main__':

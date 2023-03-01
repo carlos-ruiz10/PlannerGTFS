@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const allStops = async (state) => {
-    const peticion = await axios.get('http://127.0.0.1:5000/paradasgtfs')
+    const peticion = await axios.get('http://127.0.0.1:5000/allparadas')
     state(peticion.data.stops)
 }
 

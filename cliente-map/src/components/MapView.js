@@ -24,7 +24,7 @@ function MapView() {
       alert('Selecciona origen y destino');
       return;
     }
-    const peticion = await axios.get(`http://127.0.0.1:5000/ruta-corta?origen=${origen}&destino=${destino}`)
+    const peticion = await axios.get(`http://127.0.0.1:5000/short-route?origen=${origen}&destino=${destino}`)
     setRutaMasCorta(peticion.data.stops)
 
   }
@@ -40,7 +40,7 @@ function MapView() {
               <select className="form-select fst-italic" aria-label="Default select example" value={origen} onChange={(event) => setOrigen(event.target.value)}>
                 <option value="">Select Origen</option>
                 {stops.map((stops) => (
-                  <option key={stops.id} value={stops.id}>{stops.name}</option>
+                  <option key={stops.stop_id} value={stops.stop_id}>{stops.stop_id}</option>
                 ))}
               </select>
             </div>
@@ -50,7 +50,7 @@ function MapView() {
               <select className="form-select fst-italic" aria-label="Default select example" value={destino} onChange={(event) => setDestino(event.target.value)}>
                 <option value="">Select Destino</option>
                 {stops.map((stops) => (
-                  <option key={stops.id} value={stops.id}>{stops.name}</option>
+                  <option key={stops.stop_id} value={stops.stop_id}>{stops.stop_id}</option>
                 ))}
               </select>
             </div>
