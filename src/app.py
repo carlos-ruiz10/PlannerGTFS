@@ -108,8 +108,8 @@ def paradasgtfs():
 
     return jsonify(resultadoo)
 
-df_stops = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/GTFStops.csv', encoding='latin1')
-stopinfo = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/stop_InfoGTFS.csv',encoding='latin1')
+df_stops = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/Graphgtfs-V1.csv')
+stopinfo = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/stop_infogtfs.csv')
 
 GRAPH = nx.DiGraph()
 GRAPH = nx.from_pandas_edgelist(df_stops, source='Origen', target='Destino', edge_attr='Distancia')
