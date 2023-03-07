@@ -109,7 +109,7 @@ def paradasgtfs():
     return jsonify(resultadoo)
 
 df_stops = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/Graphgtfs-V1.csv')
-stopinfo = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/stop_infogtfs.csv')
+stopinfo = pd.read_csv(r'C:/Users/carlo/Desktop/PlannerGTFS-V2-F/src/GTFS/stop.csv')
 
 GRAPH = nx.DiGraph()
 GRAPH = nx.from_pandas_edgelist(df_stops, source='Origen', target='Destino', edge_attr='Distancia')
@@ -121,7 +121,8 @@ def shortroute():
     destino = request.args.get('destino')
 
     path = nx.dijkstra_path(GRAPH, source=origen, target=destino, weight='Distancia')
-    stops_info = stopinfo[['stop_id', 'stop_name', 'stop_lat', 'stop_lon']]
+    print(nx.dijkstra_path_length(GRAPH, source=origen, target=destino, weight='Distancia'))
+    stops_info = stopinfo[['stop_id', 'stop_name', 'stop_lat', 'stop_lon', 'color']]
     stops_in_path = stops_info[stops_info['stop_id'].isin(path)]
 
     path_info = []
@@ -130,7 +131,8 @@ def shortroute():
         stop_info_dict = {
             'name': stop_info['stop_name'],
             'latitude': stop_info['stop_lat'],
-            'longitude': stop_info['stop_lon']
+            'longitude': stop_info['stop_lon'],
+            'color': stop_info['color']
         }
         path_info.append(stop_info_dict)
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'
 import { allStops } from '../functions/funciones'
 import axios from 'axios';
@@ -74,7 +74,7 @@ function MapView() {
             {rutaMasCorta && (
               <div className="text-bg-light col-sm-12 mb-3 mb-sm-0">
                 <div className="card">
-                  <div className="card-body"style={{overflowY: 'auto', maxHeight: '400px'}}>
+                  <div className="card-body" style={{ overflowY: 'auto', maxHeight: '400px' }}>
                     <h5 className="card-title">La ruta más corta es:</h5>
                     <p className="card-text">{rutaMasCorta.map(stops => <React.Fragment key={stops.name}>{stops.name}<br /></React.Fragment>)}</p>
                   </div>
@@ -88,14 +88,32 @@ function MapView() {
           <MapContainer center={{ lat: '19.42847', lng: '-99.12766' }} zoom={13}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors' />
 
-            {rutaMasCorta.map(stops => (
-              <Marker key={stops.name} position={[stops.latitude, stops.longitude]} icon={IconLocation}>
-                <Popup>
-                  {stops.name}
-                </Popup>
-              </Marker>
-            ))}
+            {rutaMasCorta.map((stop, index) => {
+              if (index < rutaMasCorta.length - 1) {
+                const nextStop = rutaMasCorta[index + 1];
+                return (
+                  <React.Fragment key={`${stop.name}-${nextStop.name}`}>
+                    <Marker position={[stop.latitude, stop.longitude]} icon={IconLocation}>
+                      <Popup>
+                        {stop.name}
+                      </Popup>
+                    </Marker>
+                    <Polyline pathOptions={{ color: `#${stop.color}` }} positions={[
+                      [stop.latitude, stop.longitude],
+                      [nextStop.latitude, nextStop.longitude],
+                    ]} />
+                  </React.Fragment>
+                );
+              }
 
+              return (
+                <Marker key={stop.name} position={[stop.latitude, stop.longitude]} icon={IconLocation}>
+                  <Popup>
+                    {stop.name}
+                  </Popup>
+                </Marker>
+              );
+            })}
           </MapContainer>
         </div>
       </div>
