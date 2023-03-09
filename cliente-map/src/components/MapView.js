@@ -95,10 +95,12 @@ function MapView() {
                   <React.Fragment key={`${stop.name}-${nextStop.name}`}>
                     <Marker position={[stop.latitude, stop.longitude]} icon={IconLocation}>
                       <Popup>
+                        {stop.route_line}
+                        <br/>
                         {stop.name}
                       </Popup>
                     </Marker>
-                    <Polyline pathOptions={{ color: `#${stop.color}` }} positions={[
+                    <Polyline pathOptions={{ color: `#${stop.color}`, weight: 6 }} positions={[
                       [stop.latitude, stop.longitude],
                       [nextStop.latitude, nextStop.longitude],
                     ]} />

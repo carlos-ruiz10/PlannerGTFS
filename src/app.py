@@ -122,7 +122,7 @@ def shortroute():
 
     path = nx.dijkstra_path(GRAPH, source=origen, target=destino, weight='Distancia')
     print(nx.dijkstra_path_length(GRAPH, source=origen, target=destino, weight='Distancia'))
-    stops_info = stopinfo[['stop_id', 'stop_name', 'stop_lat', 'stop_lon', 'color']]
+    stops_info = stopinfo[['stop_id', 'stop_name', 'stop_lat', 'stop_lon', 'color', 'route_line']]
     stops_in_path = stops_info[stops_info['stop_id'].isin(path)]
 
     path_info = []
@@ -132,7 +132,8 @@ def shortroute():
             'name': stop_info['stop_name'],
             'latitude': stop_info['stop_lat'],
             'longitude': stop_info['stop_lon'],
-            'color': stop_info['color']
+            'color': stop_info['color'],
+            'route_line': stop_info['route_line']
         }
         path_info.append(stop_info_dict)
 
