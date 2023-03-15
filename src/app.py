@@ -3,6 +3,7 @@ from flask_cors import CORS
 from config import config
 import pandas as pd
 import networkx as nx
+import time
 
 app = Flask(__name__)
 
@@ -120,8 +121,15 @@ def shortroute():
     origen = request.args.get('origen')
     destino = request.args.get('destino')
 
+    start_time = int(round(time.time() * 1000000)) # Inicio del temporizador
+
     path = nx.dijkstra_path(GRAPH, source=origen, target=destino, weight='Distancia')
-    print(nx.dijkstra_path_length(GRAPH, source=origen, target=destino, weight='Distancia'))
+
+    end_time = int(round(time.time() * 1000000)) # Fin del temporizador
+    duration = end_time - start_time # Cálculo de la duración en microsegundos
+
+    print('La distancia son: ' + str(nx.dijkstra_path_length(GRAPH, source=origen, target=destino, weight='Distancia')) + ' Metros ' + 'Tiempo: ' + str(duration) )
+
     stops_info = stopinfo[['stop_id', 'stop_name', 'stop_lat', 'stop_lon', 'color', 'route_line']]
     stops_in_path = stops_info[stops_info['stop_id'].isin(path)]
 
